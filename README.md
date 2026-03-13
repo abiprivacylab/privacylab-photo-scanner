@@ -32,6 +32,24 @@ people's privacy online.
 ## 📜 License
 Apache 2.0 — free to use, modify, and share with attribution. Patent rights retained by author.
 
+## 🗺️ Roadmap
+
+### ✅ V1.0 — Live
+- Photo metadata scanning
+- GPS location detection with Google Maps link
+- Camera and device information
+- Privacy warnings
+- Mobile responsive design
+
+### 🔨 V2.0 — Coming This Weekend
+- Bulk upload up to 10 photos at once
+- Progress bar during scanning
+- Metadata stripping — download clean photos
+- ZIP download for multiple cleaned photos
+- Shareable privacy results card
+- HEIC support for iPhone photos
+- Mobile improvements
+
 ## 👨‍💻 Built By
 **Abhishek Anand** — Data Engineering & AI Leader
 
