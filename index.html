@@ -1236,7 +1236,7 @@ function showResults() {
 }
 
 function generateShareText(total, gpsCount, deviceCount, risk) {
-  return `🔐 Privacy Lab — My Photo Scan Results\n\n📸 Photos scanned: ${total}\n📍 GPS locations found: ${gpsCount}\n📱 Device info exposed: ${deviceCount}\n⚠️ Privacy risk: ${risk}\n\n${gpsCount > 0 ? `⚡ ${gpsCount} of my photos contained my exact location coordinates!` : '✅ No GPS location data found in my photos.'}\n\nScan your photos free at privacylab.tools\n\n"Privacy is not just a feature — it's the foundation."`;
+  return `🔐 Privacy Lab — My Scan Results\n\n📸 Photos scanned: ${total}\n📍 GPS locations found: ${gpsCount}\n📱 Device info exposed: ${deviceCount}\n⚠️ Privacy risk: ${risk}\n\n${gpsCount > 0 ? `⚡ ${gpsCount} of my photos contained my exact location coordinates!` : '✅ No GPS location data found in my photos.'}\n\nScan your photos free at privacylab.tools\n\n✨ "Privacy is not just a feature — it's the foundation."`;
 }
 
 function createResultCard(result, cardIndex) {
