@@ -3,921 +3,1543 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- Primary SEO -->
-<title>Privacy Lab — Free Photo Privacy Scanner | See What Your Photos Are Hiding</title>
-<meta name="description" content="Free photo privacy scanner that reveals hidden metadata — GPS location, camera settings, date, device info and more. Protect your privacy before sharing photos online. 100% free, nothing ever leaves your device.">
-<meta name="keywords" content="EXIF viewer, photo metadata, EXIF data online, read photo location, iPhone photo data, image metadata scanner, GPS photo location, free EXIF reader, photo privacy, hidden photo data">
+<title>Privacy Lab — Photo Privacy Scanner V2</title>
+<meta name="description" content="Scan up to 10 photos at once. Find hidden GPS location, device info and metadata. Strip metadata and download clean photos. Free forever. Nothing leaves your device.">
 <meta name="author" content="Abhishek Anand — Privacy Lab">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://privacylab.tools">
-
-<!-- Open Graph (Facebook, WhatsApp, LinkedIn previews) -->
-<meta property="og:type" content="website">
+<meta property="og:title" content="Privacy Lab — Photo Privacy Scanner V2">
+<meta property="og:description" content="Scan up to 10 photos at once. Find hidden metadata and strip it. Free forever.">
 <meta property="og:url" content="https://privacylab.tools">
-<meta property="og:title" content="Privacy Lab — See What Your Photos Are Hiding">
-<meta property="og:description" content="Free photo privacy scanner that reveals hidden metadata in your photos — GPS location, camera settings, device info and more. Protect your privacy before sharing online. Nothing ever leaves your device.">
-<meta property="og:image" content="https://yourdomain.com/preview.png">
-
-<!-- Twitter/X Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://privacylab.tools">
-<meta name="twitter:title" content="Privacy Lab — See What Your Photos Are Hiding">
-<meta name="twitter:description" content="Free photo privacy scanner that reveals hidden metadata in your photos — GPS location, camera settings, device info and more. Protect your privacy before sharing online. Nothing ever leaves your device.">
-<meta name="twitter:image" content="https://yourdomain.com/preview.png">
-
-<!-- Structured Data for Google -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Privacy Lab Photo Scanner",
-  "description": "Free photo privacy scanner that reveals hidden metadata in photos including GPS location, camera settings, date and device information. Protect your privacy before sharing photos online.",
-  "url": "https://privacylab.tools",
-  "applicationCategory": "UtilitiesApplication",
-  "operatingSystem": "Any",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "featureList": [
-    "Read EXIF metadata from photos",
-    "Extract GPS location from images",
-    "View camera settings and device info",
-    "100% private - no uploads",
-    "Works on iPhone, Android, DSLR photos"
-  ]
-}
-</script>
-
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<meta name="twitter:title" content="Privacy Lab — Photo Privacy Scanner V2">
+<meta name="twitter:description" content="Scan up to 10 photos. Find hidden GPS. Strip metadata. Free forever.">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #11111a;
-    --surface2: #1a1a28;
-    --border: #2a2a40;
-    --accent: #00e5ff;
-    --accent2: #ff3cac;
-    --accent3: #7b2fff;
-    --text: #e8e8f0;
-    --muted: #6b6b8a;
-    --success: #00ffb3;
-    --warning: #ffb300;
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Syne', sans-serif;
+    background: #0a0a0f;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
   }
 
-  /* animated grid bg */
-  body::before {
-    content: '';
+  /* Animated background */
+  .bg-grid {
     position: fixed;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
+    background-image: 
+      linear-gradient(rgba(6,182,212,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(6,182,212,0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
     z-index: 0;
   }
 
-  .glow-orb {
+  .bg-orb1 {
     position: fixed;
     width: 600px; height: 600px;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.12;
-    pointer-events: none;
+    background: radial-gradient(circle, rgba(6,182,212,0.08) 0%, transparent 70%);
+    top: -200px; left: -200px;
     z-index: 0;
+    animation: float 8s ease-in-out infinite;
   }
-  .orb1 { background: var(--accent3); top: -200px; left: -200px; }
-  .orb2 { background: var(--accent2); bottom: -200px; right: -200px; }
+
+  .bg-orb2 {
+    position: fixed;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%);
+    bottom: -150px; right: -150px;
+    z-index: 0;
+    animation: float 10s ease-in-out infinite reverse;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0,0); }
+    50% { transform: translate(30px, 30px); }
+  }
 
   .container {
     position: relative;
     z-index: 1;
     max-width: 900px;
     margin: 0 auto;
-    padding: 40px 24px 80px;
+    padding: 20px;
   }
 
-  /* HEADER */
-  header {
+  /* Header */
+  .header {
     text-align: center;
-    margin-bottom: 52px;
-    animation: fadeDown 0.6s ease both;
+    padding: 40px 20px 30px;
   }
 
   .badge {
     display: inline-block;
-    font-family: 'Space Mono', monospace;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.3);
+    color: #06b6d4;
+    padding: 4px 16px;
+    border-radius: 20px;
     font-size: 11px;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--accent);
-    border: 1px solid rgba(0,229,255,0.3);
-    padding: 5px 14px;
-    border-radius: 2px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
-  h1 {
-    font-size: clamp(36px, 6vw, 64px);
+  .title {
+    font-size: clamp(28px, 5vw, 48px);
     font-weight: 800;
-    line-height: 1;
-    letter-spacing: -2px;
-    background: linear-gradient(135deg, #fff 30%, var(--accent) 70%, var(--accent2) 100%);
+    background: linear-gradient(135deg, #06b6d4, #a855f7, #ec4899);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 14px;
+    line-height: 1.2;
+    margin-bottom: 12px;
   }
 
   .subtitle {
-    color: var(--muted);
+    color: #94a3b8;
     font-size: 16px;
-    font-weight: 400;
-    letter-spacing: 0.3px;
+    max-width: 500px;
+    margin: 0 auto 16px;
+    line-height: 1.6;
   }
 
-  /* UPLOAD ZONE */
+  .trust-badges {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .trust-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 12px;
+  }
+
+  .trust-badge span { color: #06b6d4; }
+
+  /* Upload Zone */
   .upload-zone {
-    border: 2px dashed var(--border);
+    border: 2px dashed rgba(6,182,212,0.3);
     border-radius: 16px;
-    padding: 60px 40px;
+    padding: 40px 20px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
+    background: rgba(6,182,212,0.03);
+    margin-bottom: 20px;
     position: relative;
-    overflow: hidden;
-    background: var(--surface);
-    animation: fadeUp 0.6s 0.2s ease both;
-  }
-
-  .upload-zone::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, rgba(0,229,255,0.05) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.3s;
   }
 
   .upload-zone:hover, .upload-zone.dragover {
-    border-color: var(--accent);
+    border-color: #06b6d4;
+    background: rgba(6,182,212,0.08);
     transform: translateY(-2px);
   }
-  .upload-zone:hover::before, .upload-zone.dragover::before { opacity: 1; }
 
   .upload-icon {
-    width: 64px; height: 64px;
-    margin: 0 auto 20px;
-    background: linear-gradient(135deg, var(--accent3), var(--accent));
-    border-radius: 16px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 28px;
-    transition: transform 0.3s;
+    font-size: 48px;
+    margin-bottom: 12px;
   }
-  .upload-zone:hover .upload-icon { transform: scale(1.1) rotate(-5deg); }
 
   .upload-title {
     font-size: 20px;
     font-weight: 600;
+    color: #e2e8f0;
     margin-bottom: 8px;
   }
-  .upload-sub {
-    color: var(--muted);
+
+  .upload-subtitle {
+    color: #64748b;
     font-size: 14px;
-    font-family: 'Space Mono', monospace;
+    margin-bottom: 16px;
+  }
+
+  .upload-limit {
+    display: inline-block;
+    background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.3);
+    color: #a855f7;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .upload-btn {
+    background: linear-gradient(135deg, #06b6d4, #a855f7);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upload-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(6,182,212,0.3);
   }
 
   #fileInput { display: none; }
 
-  /* PREVIEW + RESULTS */
-  #results {
+  /* Photo Queue */
+  .photo-queue {
     display: none;
-    animation: fadeUp 0.5s ease both;
+    margin-bottom: 20px;
   }
 
-  .photo-preview-wrap {
-    position: relative;
-    margin-bottom: 32px;
+  .queue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
   }
 
-  .photo-preview {
-    width: 100%;
-    max-height: 400px;
-    object-fit: contain;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    display: block;
+  .queue-title {
+    font-size: 14px;
+    color: #94a3b8;
+    font-weight: 600;
   }
 
-  .photo-overlay {
-    position: absolute;
-    top: 12px; left: 12px;
-    background: rgba(10,10,15,0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 1px;
+  .queue-count {
+    color: #06b6d4;
+    font-weight: 700;
   }
 
-  .reset-btn {
-    position: absolute;
-    top: 12px; right: 12px;
-    background: rgba(10,10,15,0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 1px;
-  }
-  .reset-btn:hover { color: var(--accent2); border-color: var(--accent2); }
-
-  /* STATS ROW */
-  .stats-row {
+  .photo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .photo-thumb {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid rgba(6,182,212,0.2);
+  }
+
+  .photo-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-thumb .remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(239,68,68,0.8);
+    border: none;
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .photo-thumb.scanning {
+    border-color: #06b6d4;
+    animation: pulse-border 1s ease-in-out infinite;
+  }
+
+  .photo-thumb.done {
+    border-color: #10b981;
+  }
+
+  .photo-thumb.has-gps {
+    border-color: #f59e0b;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { border-color: #06b6d4; }
+    50% { border-color: rgba(6,182,212,0.3); }
+  }
+
+  /* Progress Bar */
+  .progress-container {
+    display: none;
+    margin-bottom: 20px;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #06b6d4, #a855f7);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* Scan Button */
+  .scan-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #06b6d4, #a855f7);
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .scan-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(6,182,212,0.4);
+  }
+
+  /* Results Summary Card */
+  .results-summary {
+    display: none;
+    background: rgba(15,15,25,0.8);
+    border: 1px solid rgba(6,182,212,0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 28px;
+  }
+
+  .summary-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e2e8f0;
+  }
+
+  .risk-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .risk-low { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .risk-medium { background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+  .risk-high { background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+  .risk-critical { background: rgba(239,68,68,0.3); color: #ef4444; border: 1px solid #ef4444; animation: pulse-risk 1s infinite; }
+
+  @keyframes pulse-risk {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(239,68,68,0); }
+  }
+
+  .summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
   }
 
   .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px;
-    padding: 16px 18px;
-    transition: border-color 0.2s;
+    padding: 16px;
+    text-align: center;
   }
-  .stat-card:hover { border-color: var(--accent3); }
+
+  .stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #06b6d4, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
   .stat-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
+    font-size: 11px;
+    color: #64748b;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 6px;
+    letter-spacing: 1px;
+    margin-top: 4px;
   }
-  .stat-value {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--accent);
+
+  /* Share Card */
+  .share-section {
+    background: rgba(6,182,212,0.05);
+    border: 1px solid rgba(6,182,212,0.15);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .share-title {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+
+  .share-card-preview {
+    background: #0a0a0f;
+    border: 1px solid rgba(6,182,212,0.2);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.8;
+  }
+
+  .share-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .share-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .share-btn-copy {
+    background: rgba(6,182,212,0.15);
+    color: #06b6d4;
+    border: 1px solid rgba(6,182,212,0.3);
+  }
+
+  .share-btn-copy:hover { background: rgba(6,182,212,0.25); }
+
+  .share-btn-download {
+    background: rgba(168,85,247,0.15);
+    color: #a855f7;
+    border: 1px solid rgba(168,85,247,0.3);
+  }
+
+  .share-btn-download:hover { background: rgba(168,85,247,0.25); }
+
+  /* Individual Results */
+  .results-list {
+    display: none;
+  }
+
+  .result-card {
+    background: rgba(15,15,25,0.8);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .result-card.has-gps {
+    border-color: rgba(245,158,11,0.3);
+  }
+
+  .result-card-header {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    gap: 12px;
+  }
+
+  .result-filename {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e2e8f0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 200px;
   }
 
-  /* SECTIONS */
-  .section {
-    margin-bottom: 24px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    background: var(--surface);
-  }
-
-  .section-header {
+  .result-badges {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px 20px;
-    background: var(--surface2);
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    user-select: none;
-    transition: background 0.2s;
-  }
-  .section-header:hover { background: rgba(123,47,255,0.1); }
-
-  .section-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
+    gap: 6px;
+    flex-wrap: wrap;
     flex-shrink: 0;
   }
 
-  .section-title {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    flex: 1;
-  }
-
-  .section-count {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    background: var(--bg);
+  .result-badge {
     padding: 3px 10px;
     border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-
-  .chevron {
-    color: var(--muted);
-    transition: transform 0.3s;
-    font-size: 12px;
-  }
-  .section.open .chevron { transform: rotate(180deg); }
-
-  .section-body {
-    display: none;
-    padding: 4px 0;
-  }
-  .section.open .section-body { display: block; }
-
-  .meta-row {
-    display: flex;
-    align-items: flex-start;
-    padding: 10px 20px;
-    border-bottom: 1px solid rgba(42,42,64,0.5);
-    gap: 16px;
-    transition: background 0.15s;
-  }
-  .meta-row:last-child { border-bottom: none; }
-  .meta-row:hover { background: rgba(255,255,255,0.02); }
-
-  .meta-key {
-    font-family: 'Space Mono', monospace;
     font-size: 11px;
-    color: var(--muted);
-    min-width: 180px;
-    padding-top: 2px;
-    flex-shrink: 0;
-  }
-
-  .meta-val {
-    font-size: 13px;
-    color: var(--text);
-    word-break: break-all;
-    line-height: 1.5;
-  }
-
-  .meta-val.highlight {
-    color: var(--success);
     font-weight: 600;
   }
 
-  .meta-val.warn { color: var(--warning); }
+  .badge-gps { background: rgba(245,158,11,0.2); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+  .badge-clean { background: rgba(16,185,129,0.2); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+  .badge-device { background: rgba(168,85,247,0.2); color: #a855f7; border: 1px solid rgba(168,85,247,0.3); }
 
-  /* GPS MAP LINK */
-  .map-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 6px;
-    padding: 6px 14px;
-    background: rgba(0,229,255,0.08);
-    border: 1px solid rgba(0,229,255,0.25);
-    border-radius: 6px;
-    color: var(--accent);
+  .result-card-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .result-card-body.expanded {
+    display: block;
+  }
+
+  /* Metadata sections */
+  .meta-section {
+    margin-top: 16px;
+  }
+
+  .meta-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #475569;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  .meta-item {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .meta-key {
+    font-size: 11px;
+    color: #475569;
+    margin-bottom: 2px;
+  }
+
+  .meta-value {
+    font-size: 13px;
+    color: #cbd5e1;
+    font-weight: 500;
+    word-break: break-all;
+  }
+
+  .gps-warning {
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #fca5a5;
+    line-height: 1.6;
+  }
+
+  .gps-links {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .gps-link {
+    color: #06b6d4;
     text-decoration: none;
     font-size: 12px;
-    font-family: 'Space Mono', monospace;
+    padding: 4px 10px;
+    border: 1px solid rgba(6,182,212,0.3);
+    border-radius: 6px;
     transition: all 0.2s;
   }
-  .map-link:hover {
-    background: rgba(0,229,255,0.15);
-    border-color: var(--accent);
+
+  .gps-link:hover { background: rgba(6,182,212,0.1); }
+
+  /* Strip & Download */
+  .strip-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
-  /* PRIVACY ALERT */
-  .privacy-alert {
-    display: none;
-    margin-bottom: 24px;
-    padding: 16px 20px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,60,172,0.4);
-    background: rgba(255,60,172,0.07);
+  .strip-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
     font-size: 13px;
-    line-height: 1.6;
-    color: #f0c0d8;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
   }
-  .privacy-alert strong { color: var(--accent2); }
 
-  /* NO EXIF */
-  .no-exif {
+  .strip-btn-primary {
+    background: linear-gradient(135deg, #06b6d4, #a855f7);
+    color: white;
+  }
+
+  .strip-btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(6,182,212,0.3);
+  }
+
+  .strip-btn-secondary {
+    background: rgba(255,255,255,0.05);
+    color: #94a3b8;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .strip-btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+  /* Download All */
+  .download-all-section {
+    display: none;
+    margin-bottom: 20px;
+  }
+
+  .download-all-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(16,185,129,0.3);
+    background: rgba(16,185,129,0.1);
+    color: #10b981;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .download-all-btn:hover {
+    background: rgba(16,185,129,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* No metadata message */
+  .no-meta {
     text-align: center;
-    padding: 40px;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
+    padding: 20px;
+    color: #64748b;
+    font-size: 14px;
   }
 
-  /* ANIMATIONS */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  .no-meta-icon { font-size: 32px; margin-bottom: 8px; }
 
-  /* SCAN LINE EFFECT */
-  @keyframes scan {
-    0%   { top: 0; }
-    100% { top: 100%; }
-  }
-  .scanning-overlay {
+  /* Scan again */
+  .scan-again-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(6,182,212,0.2);
+    background: transparent;
+    color: #06b6d4;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
     display: none;
-    position: absolute;
-    inset: 0;
-    background: rgba(10,10,15,0.7);
-    border-radius: 12px;
-    z-index: 10;
-    overflow: hidden;
   }
-  .scanning-overlay.active { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
-  .scan-line {
-    position: absolute;
-    left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    animation: scan 1.2s linear infinite;
-  }
-  .scan-text {
-    font-family: 'Space Mono', monospace;
+
+  .scan-again-btn:hover { background: rgba(6,182,212,0.08); }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: #334155;
     font-size: 12px;
-    letter-spacing: 3px;
-    color: var(--accent);
-    position: relative;
-    z-index: 1;
+    line-height: 1.8;
   }
 
-  footer {
-    text-align: center;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    margin-top: 60px;
-    letter-spacing: 1px;
+  .footer a { color: #475569; text-decoration: none; }
+  .footer a:hover { color: #06b6d4; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(6,182,212,0.9);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 600px) {
+    .summary-stats { grid-template-columns: repeat(2, 1fr); }
+    .result-filename { max-width: 120px; }
   }
 </style>
 </head>
 <body>
 
-<div class="glow-orb orb1"></div>
-<div class="glow-orb orb2"></div>
+<div class="bg-grid"></div>
+<div class="bg-orb1"></div>
+<div class="bg-orb2"></div>
 
 <div class="container">
-
-  <header>
-    <div class="badge">🔍 PRIVACY LAB V1.1</div>
-    <h1>Photo Privacy<br>Scanner</h1>
-    <p class="subtitle">Drop any photo to reveal its hidden data — location, camera settings, timestamps & more. Protect your privacy before sharing online.</p>
-  </header>
-
-  <!-- UPLOAD -->
-  <div class="upload-zone" id="uploadZone">
-    <div class="upload-icon">📷</div>
-    <div class="upload-title">Drop your photo here</div>
-    <div class="upload-sub">or click to browse &nbsp;·&nbsp; JPG, PNG, HEIC, TIFF</div>
-    <input type="file" id="fileInput" accept="image/*">
+  <div class="header">
+    <div class="badge">PRIVACY LAB V2.0</div>
+    <h1 class="title">Photo Privacy Scanner</h1>
+    <p class="subtitle">Scan up to 10 photos at once. Reveal hidden metadata. Strip it. Download clean photos.</p>
+    <div class="trust-badges">
+      <div class="trust-badge"><span>✓</span> Nothing uploaded</div>
+      <div class="trust-badge"><span>✓</span> Browser only</div>
+      <div class="trust-badge"><span>✓</span> Free forever</div>
+      <div class="trust-badge"><span>✓</span> Up to 10 photos</div>
+    </div>
   </div>
 
-  <!-- RESULTS -->
-  <div id="results">
+  <!-- Upload Zone -->
+  <div class="upload-zone" id="uploadZone">
+    <div class="upload-icon">📸</div>
+    <div class="upload-title">Drop your photos here</div>
+    <div class="upload-subtitle">or click to select from your device</div>
+    <div class="upload-limit">📦 Up to 10 photos at once</div>
+    <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+      Choose Photos
+    </button>
+    <input type="file" id="fileInput" multiple accept="image/*">
+  </div>
 
-    <div class="privacy-alert" id="privacyAlert">
-      ⚠️ <strong>Privacy Warning:</strong> This photo contains GPS location data. Anyone with this file can see exactly where it was taken. Consider removing metadata before sharing online.
+  <!-- Photo Queue -->
+  <div class="photo-queue" id="photoQueue">
+    <div class="queue-header">
+      <span class="queue-title">Selected Photos</span>
+      <span class="queue-count" id="queueCount">0 / 10</span>
     </div>
+    <div class="photo-grid" id="photoGrid"></div>
+  </div>
 
-    <div class="photo-preview-wrap">
-      <img id="photoPreview" class="photo-preview" alt="Preview">
-      <div class="photo-overlay" id="photoOverlay">SCANNING...</div>
-      <button class="reset-btn" id="resetBtn">✕ NEW PHOTO</button>
-      <div class="scanning-overlay" id="scanningOverlay">
-        <div class="scan-line"></div>
-        <div class="scan-text">ANALYZING METADATA...</div>
+  <!-- Progress Bar -->
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-label">
+      <span id="progressLabel">Scanning photos...</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- Scan Button -->
+  <button class="scan-btn" id="scanBtn" onclick="startScan()">
+    🔍 Scan All Photos
+  </button>
+
+  <!-- Results Summary -->
+  <div class="results-summary" id="resultsSummary">
+    <div class="summary-header">
+      <div class="summary-title">📊 Scan Results</div>
+      <div class="risk-badge" id="riskBadge">CALCULATING...</div>
+    </div>
+    <div class="summary-stats">
+      <div class="stat-card">
+        <div class="stat-number" id="statScanned">0</div>
+        <div class="stat-label">Photos Scanned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statGPS">0</div>
+        <div class="stat-label">GPS Found</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statDevice">0</div>
+        <div class="stat-label">Device Info</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="statClean">0</div>
+        <div class="stat-label">Clean Photos</div>
       </div>
     </div>
 
-    <div class="stats-row" id="statsRow"></div>
-
-    <div id="sectionsContainer"></div>
-
-    <div class="no-exif" id="noExif" style="display:none;">
-      <div style="font-size:40px;margin-bottom:12px;">🔇</div>
-      No EXIF metadata found in this image.<br>
-      <span style="color:#4a4a6a;font-size:11px;margin-top:8px;display:block;">The file may have had its metadata stripped, or it's a screenshot/PNG without embedded data.</span>
+    <!-- Share Card -->
+    <div class="share-section">
+      <div class="share-title">📤 Share Your Results — Spread Privacy Awareness</div>
+      <div class="share-card-preview" id="shareCardText"></div>
+      <div class="share-buttons">
+        <button class="share-btn share-btn-copy" onclick="copyShareCard()">📋 Copy to Share</button>
+        <button class="share-btn share-btn-download" onclick="downloadShareCard()">💾 Save as Image</button>
+      </div>
     </div>
-
   </div>
 
-  <footer>Built by <a href="https://www.linkedin.com/in/abhishek-anand-a3793155" target="_blank" style="color:var(--accent);text-decoration:none;">Abhishek Anand</a> · All processing happens locally in your browser · No data uploaded anywhere · <a href="https://privacylab.tools" target="_blank" style="color:var(--accent);text-decoration:none;">privacylab.tools</a></footer>
+  <!-- Download All -->
+  <div class="download-all-section" id="downloadAllSection">
+    <button class="download-all-btn" onclick="downloadAllClean()">
+      📦 Download All Clean Photos (ZIP)
+    </button>
+  </div>
 
+  <!-- Scan Again -->
+  <button class="scan-again-btn" id="scanAgainBtn" onclick="resetScanner()">
+    🔄 Scan More Photos
+  </button>
+
+  <!-- Individual Results -->
+  <div class="results-list" id="resultsList"></div>
+
+  <div class="footer">
+    Built by <a href="https://privacylab.tools">Abhishek Anand</a> · 
+    All processing happens locally · 
+    No data uploaded anywhere · 
+    <a href="https://privacylab.tools">privacylab.tools</a>
+    <br>
+    <a href="https://github.com/abiprivacylab/privacylab-photo-scanner">GitHub</a> · 
+    Apache 2.0 License · 
+    <em>Privacy is not just a feature — it's the foundation.</em>
+  </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-// ── EXIF TAG DICTIONARY ───────────────────────────────────────────────────────
-const EXIF_TAGS = {
-  0x010E:'ImageDescription',0x010F:'Make',0x0110:'Model',0x0112:'Orientation',
-  0x011A:'XResolution',0x011B:'YResolution',0x0128:'ResolutionUnit',
-  0x0131:'Software',0x0132:'DateTime',0x013B:'Artist',0x013E:'WhitePoint',
-  0x013F:'PrimaryChromaticities',0x0213:'YCbCrPositioning',
-  0x8298:'Copyright',0x8769:'ExifIFDPointer',0x8825:'GPSInfoIFDPointer',
-  0x9000:'ExifVersion',0x9003:'DateTimeOriginal',0x9004:'DateTimeDigitized',
-  0x9101:'ComponentsConfiguration',0x9102:'CompressedBitsPerPixel',
-  0x9201:'ShutterSpeedValue',0x9202:'ApertureValue',0x9203:'BrightnessValue',
-  0x9204:'ExposureBiasValue',0x9205:'MaxApertureValue',0x9206:'SubjectDistance',
-  0x9207:'MeteringMode',0x9208:'LightSource',0x9209:'Flash',
-  0x920A:'FocalLength',0x9214:'SubjectArea',0x927C:'MakerNote',
-  0x9286:'UserComment',0x9290:'SubSecTime',0x9291:'SubSecTimeOriginal',
-  0x9292:'SubSecTimeDigitized',0xA000:'FlashpixVersion',0xA001:'ColorSpace',
-  0xA002:'PixelXDimension',0xA003:'PixelYDimension',0xA005:'InteroperabilityIFDPointer',
-  0xA20B:'FlashEnergy',0xA20E:'FocalPlaneXResolution',0xA20F:'FocalPlaneYResolution',
-  0xA210:'FocalPlaneResolutionUnit',0xA214:'SubjectLocation',0xA215:'ExposureIndex',
-  0xA217:'SensingMethod',0xA300:'FileSource',0xA301:'SceneType',0xA302:'CFAPattern',
-  0xA401:'CustomRendered',0xA402:'ExposureMode',0xA403:'WhiteBalance',
-  0xA404:'DigitalZoomRatio',0xA405:'FocalLengthIn35mmFilm',0xA406:'SceneCaptureType',
-  0xA407:'GainControl',0xA408:'Contrast',0xA409:'Saturation',0xA40A:'Sharpness',
-  0xA40C:'SubjectDistanceRange',0xA420:'ImageUniqueID',
-  0x8822:'ExposureProgram',0x8824:'SpectralSensitivity',0x8827:'ISOSpeedRatings',
-  0x829A:'ExposureTime',0x829D:'FNumber',
-};
-const GPS_TAGS = {
-  0x00:'GPSVersionID',0x01:'GPSLatitudeRef',0x02:'GPSLatitude',
-  0x03:'GPSLongitudeRef',0x04:'GPSLongitude',0x05:'GPSAltitudeRef',
-  0x06:'GPSAltitude',0x07:'GPSTimeStamp',0x08:'GPSSatellites',
-  0x09:'GPSStatus',0x0A:'GPSMeasureMode',0x0B:'GPSDOP',
-  0x0C:'GPSSpeedRef',0x0D:'GPSSpeed',0x0E:'GPSTrackRef',0x0F:'GPSTrack',
-  0x10:'GPSImgDirectionRef',0x11:'GPSImgDirection',0x12:'GPSMapDatum',
-  0x1D:'GPSDateStamp',
-};
+// ============================================
+// PRIVACY LAB V2.0 — Photo Privacy Scanner
+// Built by Abhishek Anand — privacylab.tools
+// Privacy is not just a feature — it's the foundation
+// ============================================
 
-// ── PURE JS EXIF PARSER ───────────────────────────────────────────────────────
-function parseEXIF(buffer) {
-  const data = new DataView(buffer);
-  const tags = {};
+let selectedFiles = [];
+let scanResults = [];
+let strippedFiles = {};
 
-  // Must be JPEG: starts with FFD8
-  if (data.getUint16(0) !== 0xFFD8) return tags;
+// ============================================
+// FILE SELECTION
+// ============================================
 
-  let offset = 2;
-  while (offset < data.byteLength - 2) {
-    if (data.getUint8(offset) !== 0xFF) break;
-    const marker = data.getUint16(offset);
-    offset += 2;
-    if (marker === 0xFFE1) { // APP1 - EXIF
-      const segLen = data.getUint16(offset);
-      const exifHeader = String.fromCharCode(...new Uint8Array(buffer, offset + 2, 4));
-      if (exifHeader === 'Exif') {
-        const tiffStart = offset + 8;
-        parseTIFF(data, tiffStart, tags);
-      }
-      offset += segLen;
-    } else if (marker === 0xFFDA) {
-      break; // Start of scan - stop
-    } else {
-      offset += data.getUint16(offset);
-    }
-  }
-  return tags;
-}
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  handleFiles(Array.from(e.target.files));
+});
 
-function parseTIFF(data, tiffStart, tags) {
-  const littleEndian = data.getUint16(tiffStart) === 0x4949;
-  const getUint16 = (o) => data.getUint16(tiffStart + o, littleEndian);
-  const getUint32 = (o) => data.getUint32(tiffStart + o, littleEndian);
-  const getInt32  = (o) => data.getInt32(tiffStart + o, littleEndian);
-
-  const ifd0 = getUint32(4);
-  readIFD(data, tiffStart, ifd0, EXIF_TAGS, tags, littleEndian);
-
-  if (tags.ExifIFDPointer) {
-    readIFD(data, tiffStart, tags.ExifIFDPointer, EXIF_TAGS, tags, littleEndian);
-    delete tags.ExifIFDPointer;
-  }
-  if (tags.GPSInfoIFDPointer) {
-    readIFD(data, tiffStart, tags.GPSInfoIFDPointer, GPS_TAGS, tags, littleEndian);
-    delete tags.GPSInfoIFDPointer;
-  }
-}
-
-function readIFD(data, base, ifdOffset, tagDict, tags, le) {
-  if (ifdOffset === 0 || ifdOffset + 2 > data.byteLength) return;
-  const count = data.getUint16(base + ifdOffset, le);
-  for (let i = 0; i < count; i++) {
-    const entryOffset = ifdOffset + 2 + i * 12;
-    if (base + entryOffset + 12 > data.byteLength) break;
-    const tag    = data.getUint16(base + entryOffset, le);
-    const type   = data.getUint16(base + entryOffset + 2, le);
-    const numVal = data.getUint32(base + entryOffset + 4, le);
-    const valOffset = base + entryOffset + 8;
-    const name = tagDict[tag];
-    if (!name) continue;
-    const val = readValue(data, base, valOffset, type, numVal, le);
-    if (val !== null) tags[name] = val;
-  }
-}
-
-function readValue(data, base, valOffset, type, count, le) {
-  const typeSizes = [0,1,1,2,4,8,1,1,2,4,8,4,8];
-  const typeSize = typeSizes[type] || 1;
-  const totalSize = typeSize * count;
-  let offset = valOffset;
-  if (totalSize > 4) {
-    offset = base + data.getUint32(valOffset, le);
-  }
-  if (offset + totalSize > data.byteLength) return null;
-
-  if (type === 2) { // ASCII
-    let str = '';
-    for (let i = 0; i < count - 1; i++) str += String.fromCharCode(data.getUint8(offset + i));
-    return str.trim();
-  }
-  if (type === 3) { // SHORT
-    if (count === 1) return data.getUint16(offset, le);
-    const arr = []; for (let i = 0; i < count; i++) arr.push(data.getUint16(offset + i*2, le)); return arr;
-  }
-  if (type === 4) { // LONG
-    if (count === 1) return data.getUint32(offset, le);
-    const arr = []; for (let i = 0; i < count; i++) arr.push(data.getUint32(offset + i*4, le)); return arr;
-  }
-  if (type === 5) { // RATIONAL
-    const arr = [];
-    for (let i = 0; i < count; i++) {
-      const num = data.getUint32(offset + i*8, le);
-      const den = data.getUint32(offset + i*8 + 4, le);
-      arr.push(den !== 0 ? num/den : 0);
-    }
-    return count === 1 ? arr[0] : arr;
-  }
-  if (type === 10) { // SRATIONAL
-    const arr = [];
-    for (let i = 0; i < count; i++) {
-      const num = data.getInt32(offset + i*8, le);
-      const den = data.getInt32(offset + i*8 + 4, le);
-      arr.push(den !== 0 ? num/den : 0);
-    }
-    return count === 1 ? arr[0] : arr;
-  }
-  if (type === 1) { // BYTE
-    if (count === 1) return data.getUint8(offset);
-    const arr = []; for (let i = 0; i < count; i++) arr.push(data.getUint8(offset + i)); return arr;
-  }
-  return null;
-}
-
-// ── UI CODE ───────────────────────────────────────────────────────────────────
 const uploadZone = document.getElementById('uploadZone');
-const fileInput = document.getElementById('fileInput');
-const results = document.getElementById('results');
-const photoPreview = document.getElementById('photoPreview');
-const photoOverlay = document.getElementById('photoOverlay');
-const resetBtn = document.getElementById('resetBtn');
-const scanningOverlay = document.getElementById('scanningOverlay');
-const statsRow = document.getElementById('statsRow');
-const sectionsContainer = document.getElementById('sectionsContainer');
-const noExif = document.getElementById('noExif');
-const privacyAlert = document.getElementById('privacyAlert');
 
-uploadZone.addEventListener('click', () => fileInput.click());
-fileInput.addEventListener('change', e => { if(e.target.files[0]) handleFile(e.target.files[0]); });
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault(); uploadZone.classList.remove('dragover');
-  if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+uploadZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  uploadZone.classList.add('dragover');
 });
 
-resetBtn.addEventListener('click', () => {
-  results.style.display = 'none';
-  uploadZone.style.display = 'block';
-  fileInput.value = '';
-  statsRow.innerHTML = '';
-  sectionsContainer.innerHTML = '';
-  noExif.style.display = 'none';
-  privacyAlert.style.display = 'none';
+uploadZone.addEventListener('dragleave', () => {
+  uploadZone.classList.remove('dragover');
 });
 
-function handleFile(file) {
-  uploadZone.style.display = 'none';
-  results.style.display = 'block';
-  photoOverlay.textContent = file.name;
-  scanningOverlay.classList.add('active');
-  statsRow.innerHTML = '';
-  sectionsContainer.innerHTML = '';
-  noExif.style.display = 'none';
-  privacyAlert.style.display = 'none';
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  handleFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+});
 
-  const url = URL.createObjectURL(file);
-  photoPreview.src = url;
+uploadZone.addEventListener('click', (e) => {
+  if (e.target.tagName !== 'BUTTON') {
+    document.getElementById('fileInput').click();
+  }
+});
 
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const tags = parseEXIF(e.target.result);
-    scanningOverlay.classList.remove('active');
-    renderMetadata(tags, file, photoPreview);
-  };
-  reader.onerror = function() {
-    scanningOverlay.classList.remove('active');
-    renderMetadata({}, file, photoPreview);
-  };
-  reader.readAsArrayBuffer(file);
-}
+function handleFiles(newFiles) {
+  const remaining = 10 - selectedFiles.length;
+  if (remaining <= 0) {
+    showToast('Maximum 10 photos allowed');
+    return;
+  }
 
-function dmsToDecimal(d, m, s, ref) {
-  let dec = d + m/60 + s/3600;
-  if(ref === 'S' || ref === 'W') dec = -dec;
-  return dec;
-}
+  const toAdd = newFiles.slice(0, remaining);
+  if (newFiles.length > remaining) {
+    showToast(`Only ${remaining} more photo(s) can be added. Limit is 10.`);
+  }
 
-function renderMetadata(tags, file, img) {
-  const hasAny = tags && Object.keys(tags).length > 0;
-
-  // Quick stats
-  const stats = [
-    { label: 'File Size', value: formatBytes(file.size) },
-    { label: 'Dimensions', value: img.naturalWidth && img.naturalHeight ? `${img.naturalWidth} × ${img.naturalHeight}` : '—' },
-    { label: 'Format', value: file.type.split('/')[1]?.toUpperCase() || '—' },
-    { label: 'Fields Found', value: hasAny ? Object.keys(tags).length : '0' },
-  ];
-
-  statsRow.innerHTML = stats.map(s => `
-    <div class="stat-card">
-      <div class="stat-label">${s.label}</div>
-      <div class="stat-value">${s.value}</div>
-    </div>
-  `).join('');
-
-  if (!hasAny) { noExif.style.display = 'block'; return; }
-
-  // Group tags into sections
-  const sections = [
-    {
-      title: 'Camera & Device',
-      icon: '📷',
-      color: '#7b2fff',
-      keys: ['Make','Model','Software','LensModel','LensMake','LensSpecification','Flash','ExposureProgram','MeteringMode'],
-    },
-    {
-      title: 'Capture Settings',
-      icon: '⚙️',
-      color: '#00e5ff',
-      keys: ['ExposureTime','FNumber','ISOSpeedRatings','FocalLength','FocalLengthIn35mmFilm','ApertureValue','ShutterSpeedValue','BrightnessValue','ExposureBiasValue','WhiteBalance','DigitalZoomRatio','SceneCaptureType'],
-    },
-    {
-      title: 'Date & Time',
-      icon: '🕐',
-      color: '#ff3cac',
-      keys: ['DateTime','DateTimeOriginal','DateTimeDigitized','OffsetTime','OffsetTimeOriginal'],
-    },
-    {
-      title: 'GPS Location',
-      icon: '📍',
-      color: '#00ffb3',
-      keys: ['GPSLatitude','GPSLatitudeRef','GPSLongitude','GPSLongitudeRef','GPSAltitude','GPSAltitudeRef','GPSSpeed','GPSSpeedRef','GPSImgDirection','GPSImgDirectionRef','GPSDateStamp','GPSTimeStamp'],
-    },
-    {
-      title: 'Image Properties',
-      icon: '🖼️',
-      color: '#ffb300',
-      keys: ['ImageWidth','ImageLength','XResolution','YResolution','ResolutionUnit','Orientation','ColorSpace','PixelXDimension','PixelYDimension','BitsPerSample','Compression','PhotometricInterpretation'],
-    },
-    {
-      title: 'Copyright & Author',
-      icon: '©',
-      color: '#a78bfa',
-      keys: ['Artist','Copyright','ImageDescription','UserComment','XPComment','XPAuthor','XPTitle','XPSubject','XPKeywords'],
-    },
-  ];
-
-  let gpsLat = null, gpsLon = null;
-
-  sections.forEach(sec => {
-    const rows = sec.keys
-      .filter(k => tags[k] !== undefined && tags[k] !== '')
-      .map(k => ({ key: k, val: formatValue(k, tags[k]) }));
-
-    // GPS special
-    if(sec.title === 'GPS Location') {
-      if(tags.GPSLatitude && tags.GPSLatitudeRef && tags.GPSLongitude && tags.GPSLongitudeRef) {
-        const lat = dmsToDecimal(tags.GPSLatitude[0], tags.GPSLatitude[1], tags.GPSLatitude[2], tags.GPSLatitudeRef);
-        const lon = dmsToDecimal(tags.GPSLongitude[0], tags.GPSLongitude[1], tags.GPSLongitude[2], tags.GPSLongitudeRef);
-        gpsLat = lat; gpsLon = lon;
-        privacyAlert.style.display = 'block';
-      }
+  toAdd.forEach(file => {
+    if (!selectedFiles.find(f => f.name === file.name && f.size === file.size)) {
+      selectedFiles.push(file);
     }
-
-    if(rows.length === 0) return;
-
-    const el = document.createElement('div');
-    el.className = 'section open';
-    el.innerHTML = `
-      <div class="section-header">
-        <div class="section-icon" style="background:${sec.color}22; color:${sec.color}">${sec.icon}</div>
-        <div class="section-title">${sec.title}</div>
-        <span class="section-count">${rows.length} fields</span>
-        <span class="chevron">▼</span>
-      </div>
-      <div class="section-body">
-        ${rows.map(r => `
-          <div class="meta-row">
-            <div class="meta-key">${r.key}</div>
-            <div class="meta-val ${r.key.startsWith('GPS') ? 'highlight' : ''}">${r.val}</div>
-          </div>
-        `).join('')}
-        ${gpsLat && sec.title === 'GPS Location' ? `
-          <div class="meta-row">
-            <div class="meta-key">Open in Map</div>
-            <div class="meta-val">
-              <a class="map-link" href="https://www.google.com/maps?q=${gpsLat},${gpsLon}" target="_blank">
-                📍 View on Google Maps &rarr;
-              </a>
-              <a class="map-link" href="https://maps.apple.com/?q=${gpsLat},${gpsLon}" target="_blank" style="margin-left:8px">
-                🍎 Apple Maps &rarr;
-              </a>
-            </div>
-          </div>
-        ` : ''}
-      </div>
-    `;
-    el.querySelector('.section-header').addEventListener('click', () => el.classList.toggle('open'));
-    sectionsContainer.appendChild(el);
   });
 
-  // Remaining unknown tags
-  const knownKeys = sections.flatMap(s => s.keys);
-  const unknown = Object.keys(tags).filter(k => !knownKeys.includes(k) && k !== 'thumbnail' && typeof tags[k] !== 'object');
-  if(unknown.length) {
-    const el = document.createElement('div');
-    el.className = 'section';
-    el.innerHTML = `
-      <div class="section-header">
-        <div class="section-icon" style="background:#ffffff11; color:#888">🔎</div>
-        <div class="section-title">Other Tags</div>
-        <span class="section-count">${unknown.length} fields</span>
-        <span class="chevron">▼</span>
+  updatePhotoQueue();
+}
+
+function updatePhotoQueue() {
+  const queue = document.getElementById('photoQueue');
+  const grid = document.getElementById('photoGrid');
+  const count = document.getElementById('queueCount');
+  const scanBtn = document.getElementById('scanBtn');
+
+  if (selectedFiles.length === 0) {
+    queue.style.display = 'none';
+    scanBtn.style.display = 'none';
+    return;
+  }
+
+  queue.style.display = 'block';
+  scanBtn.style.display = 'block';
+  count.textContent = `${selectedFiles.length} / 10`;
+
+  grid.innerHTML = '';
+  selectedFiles.forEach((file, index) => {
+    const thumb = document.createElement('div');
+    thumb.className = 'photo-thumb';
+    thumb.id = `thumb-${index}`;
+
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.alt = file.name;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-btn';
+    removeBtn.innerHTML = '×';
+    removeBtn.onclick = (e) => {
+      e.stopPropagation();
+      removeFile(index);
+    };
+
+    thumb.appendChild(img);
+    thumb.appendChild(removeBtn);
+    grid.appendChild(thumb);
+  });
+}
+
+function removeFile(index) {
+  selectedFiles.splice(index, 1);
+  updatePhotoQueue();
+}
+
+// ============================================
+// EXIF PARSING ENGINE
+// ============================================
+
+function getUint16(view, offset, littleEndian) {
+  return view.getUint16(offset, littleEndian);
+}
+
+function getUint32(view, offset, littleEndian) {
+  return view.getUint32(offset, littleEndian);
+}
+
+function parseExif(buffer) {
+  const data = new DataView(buffer);
+  const result = {};
+
+  if (data.getUint16(0) !== 0xFFD8) return result;
+
+  let offset = 2;
+  while (offset < data.byteLength - 1) {
+    if (data.getUint8(offset) !== 0xFF) break;
+    const marker = data.getUint8(offset + 1);
+    const length = data.getUint16(offset + 2);
+
+    if (marker === 0xE1) {
+      const exifHeader = String.fromCharCode(
+        data.getUint8(offset + 4), data.getUint8(offset + 5),
+        data.getUint8(offset + 6), data.getUint8(offset + 7)
+      );
+      if (exifHeader === 'Exif') {
+        parseIFD(data, offset + 10, result);
+      }
+    }
+    offset += 2 + length;
+  }
+  return result;
+}
+
+const TAGS = {
+  0x010F: 'Make', 0x0110: 'Model', 0x0112: 'Orientation',
+  0x011A: 'XResolution', 0x011B: 'YResolution', 0x0128: 'ResolutionUnit',
+  0x0131: 'Software', 0x0132: 'DateTime', 0x013B: 'Artist',
+  0x8769: 'ExifIFD', 0x8825: 'GPSIFD', 0x9000: 'ExifVersion',
+  0x9003: 'DateTimeOriginal', 0x9004: 'DateTimeDigitized',
+  0x9207: 'MeteringMode', 0x9208: 'LightSource', 0x9209: 'Flash',
+  0x920A: 'FocalLength', 0xA001: 'ColorSpace', 0xA002: 'PixelXDimension',
+  0xA003: 'PixelYDimension', 0xA405: 'FocalLengthIn35mmFilm',
+  0x829A: 'ExposureTime', 0x829D: 'FNumber', 0x8827: 'ISOSpeedRatings',
+  0x9201: 'ShutterSpeedValue', 0x9202: 'ApertureValue',
+  0x9205: 'MaxApertureValue', 0x9286: 'UserComment',
+  0x013C: 'HostComputer', 0x013E: 'WhitePoint',
+};
+
+const GPS_TAGS = {
+  0x0000: 'GPSVersionID', 0x0001: 'GPSLatitudeRef', 0x0002: 'GPSLatitude',
+  0x0003: 'GPSLongitudeRef', 0x0004: 'GPSLongitude', 0x0005: 'GPSAltitudeRef',
+  0x0006: 'GPSAltitude', 0x0007: 'GPSTimeStamp', 0x0008: 'GPSSatellites',
+  0x0009: 'GPSStatus', 0x000A: 'GPSMeasureMode', 0x000B: 'GPSDOP',
+  0x000C: 'GPSSpeedRef', 0x000D: 'GPSSpeed', 0x001D: 'GPSDateStamp',
+  0x0012: 'GPSMapDatum', 0x001B: 'GPSProcessingMethod',
+};
+
+function parseIFD(data, start, result) {
+  let littleEndian = data.getUint16(start) === 0x4949;
+  let ifdOffset = start + getUint32(data, start + 4, littleEndian);
+
+  function readIFD(offset, tagMap, target) {
+    if (offset + 2 > data.byteLength) return;
+    const count = getUint16(data, offset, littleEndian);
+    for (let i = 0; i < count; i++) {
+      const entryOffset = offset + 2 + i * 12;
+      if (entryOffset + 12 > data.byteLength) break;
+
+      const tag = getUint16(data, entryOffset, littleEndian);
+      const type = getUint16(data, entryOffset + 2, littleEndian);
+      const numValues = getUint32(data, entryOffset + 4, littleEndian);
+      const valueOffset = entryOffset + 8;
+
+      const tagName = tagMap[tag];
+
+      if (tag === 0x8769 && tagMap === TAGS) {
+        const subOffset = start + getUint32(data, valueOffset, littleEndian);
+        readIFD(subOffset, TAGS, result);
+        continue;
+      }
+
+      if (tag === 0x8825 && tagMap === TAGS) {
+        const gpsOffset = start + getUint32(data, valueOffset, littleEndian);
+        const gpsData = {};
+        readIFD(gpsOffset, GPS_TAGS, gpsData);
+        result.GPS = gpsData;
+        continue;
+      }
+
+      if (!tagName) continue;
+
+      try {
+        if (type === 2) {
+          let strOffset = numValues <= 4 ? valueOffset : start + getUint32(data, valueOffset, littleEndian);
+          let str = '';
+          for (let j = 0; j < numValues - 1; j++) {
+            const ch = data.getUint8(strOffset + j);
+            if (ch === 0) break;
+            str += String.fromCharCode(ch);
+          }
+          target[tagName] = str;
+        } else if (type === 3) {
+          target[tagName] = getUint16(data, valueOffset, littleEndian);
+        } else if (type === 4) {
+          target[tagName] = getUint32(data, valueOffset, littleEndian);
+        } else if (type === 5 || type === 10) {
+          const ratOffset = numValues <= 1 ? valueOffset : start + getUint32(data, valueOffset, littleEndian);
+          if (tagName && tagName.startsWith('GPS') && type === 5) {
+            const vals = [];
+            for (let j = 0; j < Math.min(numValues, 3); j++) {
+              const num = getUint32(data, ratOffset + j * 8, littleEndian);
+              const den = getUint32(data, ratOffset + j * 8 + 4, littleEndian);
+              vals.push(den !== 0 ? num / den : 0);
+            }
+            target[tagName] = vals;
+          } else {
+            const num = getUint32(data, ratOffset, littleEndian);
+            const den = getUint32(data, ratOffset + 4, littleEndian);
+            target[tagName] = den !== 0 ? (num / den).toFixed(4) : num;
+          }
+        } else if (type === 7) {
+          target[tagName] = '[Binary Data]';
+        }
+      } catch(e) {}
+    }
+  }
+
+  readIFD(ifdOffset, TAGS, result);
+}
+
+function dmsToDecimal(dms, ref) {
+  if (!dms || dms.length < 3) return null;
+  let decimal = dms[0] + dms[1] / 60 + dms[2] / 3600;
+  if (ref === 'S' || ref === 'W') decimal = -decimal;
+  return decimal.toFixed(6);
+}
+
+// ============================================
+// METADATA STRIPPING ENGINE
+// ============================================
+
+function stripMetadata(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(url);
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, 'image/jpeg', 0.95);
+    };
+    img.src = url;
+  });
+}
+
+// ============================================
+// SCAN ENGINE
+// ============================================
+
+async function startScan() {
+  if (selectedFiles.length === 0) return;
+
+  document.getElementById('scanBtn').style.display = 'none';
+  document.getElementById('progressContainer').style.display = 'block';
+  document.getElementById('resultsList').style.display = 'none';
+  document.getElementById('resultsList').innerHTML = '';
+  scanResults = [];
+  strippedFiles = {};
+
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const file = selectedFiles[i];
+    const thumb = document.getElementById(`thumb-${i}`);
+    if (thumb) thumb.className = 'photo-thumb scanning';
+
+    updateProgress(i, selectedFiles.length, `Scanning ${file.name}...`);
+
+    const result = await scanFile(file, i);
+    scanResults.push(result);
+
+    if (thumb) {
+      thumb.className = result.hasGPS ? 'photo-thumb has-gps' : 'photo-thumb done';
+    }
+  }
+
+  updateProgress(selectedFiles.length, selectedFiles.length, 'Scan complete!');
+
+  setTimeout(() => {
+    document.getElementById('progressContainer').style.display = 'none';
+    showResults();
+  }, 500);
+}
+
+function scanFile(file, index) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const buffer = e.target.result;
+      const exif = parseExif(buffer);
+
+      let lat = null, lng = null, hasGPS = false;
+
+      if (exif.GPS && exif.GPS.GPSLatitude && exif.GPS.GPSLongitude) {
+        lat = dmsToDecimal(exif.GPS.GPSLatitude, exif.GPS.GPSLatitudeRef);
+        lng = dmsToDecimal(exif.GPS.GPSLongitude, exif.GPS.GPSLongitudeRef);
+        if (lat && lng) hasGPS = true;
+      }
+
+      resolve({
+        index,
+        file,
+        name: file.name,
+        size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+        exif,
+        lat,
+        lng,
+        hasGPS,
+        hasDevice: !!(exif.Make || exif.Model),
+        hasDateTime: !!(exif.DateTime || exif.DateTimeOriginal),
+        metadataCount: Object.keys(exif).length
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function updateProgress(current, total, label) {
+  const pct = total > 0 ? Math.round((current / total) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPercent').textContent = pct + '%';
+  document.getElementById('progressLabel').textContent = label;
+}
+
+// ============================================
+// RESULTS DISPLAY
+// ============================================
+
+function showResults() {
+  const gpsCount = scanResults.filter(r => r.hasGPS).length;
+  const deviceCount = scanResults.filter(r => r.hasDevice).length;
+  const cleanCount = scanResults.filter(r => r.metadataCount === 0).length;
+  const total = scanResults.length;
+
+  // Risk calculation
+  let risk, riskClass;
+  const gpsRatio = gpsCount / total;
+  if (gpsCount === 0 && deviceCount === 0) { risk = 'LOW'; riskClass = 'risk-low'; }
+  else if (gpsRatio > 0.7) { risk = 'CRITICAL'; riskClass = 'risk-critical'; }
+  else if (gpsRatio > 0.3 || gpsCount > 0) { risk = 'HIGH'; riskClass = 'risk-high'; }
+  else { risk = 'MEDIUM'; riskClass = 'risk-medium'; }
+
+  document.getElementById('statScanned').textContent = total;
+  document.getElementById('statGPS').textContent = gpsCount;
+  document.getElementById('statDevice').textContent = deviceCount;
+  document.getElementById('statClean').textContent = cleanCount;
+
+  const riskBadge = document.getElementById('riskBadge');
+  riskBadge.textContent = `⚠️ ${risk} RISK`;
+  riskBadge.className = `risk-badge ${riskClass}`;
+
+  // Share card
+  const shareText = generateShareText(total, gpsCount, deviceCount, risk);
+  document.getElementById('shareCardText').textContent = shareText;
+
+  document.getElementById('resultsSummary').style.display = 'block';
+  document.getElementById('resultsList').style.display = 'block';
+  document.getElementById('scanAgainBtn').style.display = 'block';
+
+  if (gpsCount > 0 || deviceCount > 0) {
+    document.getElementById('downloadAllSection').style.display = 'block';
+  }
+
+  // Individual results
+  const list = document.getElementById('resultsList');
+  scanResults.forEach((result, i) => {
+    list.appendChild(createResultCard(result, i));
+  });
+}
+
+function generateShareText(total, gpsCount, deviceCount, risk) {
+  return `🔐 Privacy Lab — My Photo Scan Results\n\n📸 Photos scanned: ${total}\n📍 GPS locations found: ${gpsCount}\n📱 Device info exposed: ${deviceCount}\n⚠️ Privacy risk: ${risk}\n\n${gpsCount > 0 ? `⚡ ${gpsCount} of my photos contained my exact location coordinates!` : '✅ No GPS location data found in my photos.'}\n\nScan your photos free at privacylab.tools\n\n"Privacy is not just a feature — it's the foundation."`;
+}
+
+function createResultCard(result, cardIndex) {
+  const card = document.createElement('div');
+  card.className = `result-card${result.hasGPS ? ' has-gps' : ''}`;
+
+  const badges = [];
+  if (result.hasGPS) badges.push('<span class="result-badge badge-gps">📍 GPS Found</span>');
+  if (result.hasDevice) badges.push('<span class="result-badge badge-device">📱 Device Info</span>');
+  if (!result.hasGPS && !result.hasDevice && result.metadataCount === 0) {
+    badges.push('<span class="result-badge badge-clean">✅ Clean</span>');
+  }
+
+  card.innerHTML = `
+    <div class="result-card-header" onclick="toggleCard(${cardIndex})">
+      <span class="result-filename" title="${result.name}">${result.name}</span>
+      <div class="result-badges">
+        ${badges.join('')}
+        <span style="color:#475569;font-size:11px">${result.size}</span>
+        <span style="color:#475569;font-size:16px" id="chevron-${cardIndex}">▼</span>
       </div>
-      <div class="section-body">
-        ${unknown.map(k => `
-          <div class="meta-row">
-            <div class="meta-key">${k}</div>
-            <div class="meta-val">${String(tags[k]).substring(0,120)}</div>
+    </div>
+    <div class="result-card-body" id="body-${cardIndex}">
+      ${buildCardBody(result, cardIndex)}
+    </div>
+  `;
+
+  return card;
+}
+
+function toggleCard(index) {
+  const body = document.getElementById(`body-${index}`);
+  const chevron = document.getElementById(`chevron-${index}`);
+  body.classList.toggle('expanded');
+  chevron.textContent = body.classList.contains('expanded') ? '▲' : '▼';
+}
+
+function buildCardBody(result, cardIndex) {
+  let html = '';
+
+  if (result.metadataCount === 0) {
+    return `<div class="no-meta"><div class="no-meta-icon">✅</div>No metadata found in this photo. It's clean!</div>`;
+  }
+
+  // GPS Section
+  if (result.hasGPS) {
+    const mapsUrl = `https://www.google.com/maps?q=${result.lat},${result.lng}`;
+    const appleMapsUrl = `https://maps.apple.com/?q=${result.lat},${result.lng}`;
+    html += `
+      <div class="meta-section">
+        <div class="meta-section-title">📍 GPS Location</div>
+        <div class="gps-warning">
+          ⚠️ This photo contains your exact GPS coordinates!<br>
+          <strong>Latitude:</strong> ${result.lat} · <strong>Longitude:</strong> ${result.lng}
+          <div class="gps-links">
+            <a href="${mapsUrl}" target="_blank" class="gps-link">🗺️ Google Maps</a>
+            <a href="${appleMapsUrl}" target="_blank" class="gps-link">🍎 Apple Maps</a>
           </div>
-        `).join('')}
+        </div>
       </div>
     `;
-    el.querySelector('.section-header').addEventListener('click', () => el.classList.toggle('open'));
-    sectionsContainer.appendChild(el);
+  }
+
+  // Device Section
+  if (result.hasDevice) {
+    html += `
+      <div class="meta-section">
+        <div class="meta-section-title">📱 Device Information</div>
+        <div class="meta-grid">
+          ${result.exif.Make ? `<div class="meta-item"><div class="meta-key">Make</div><div class="meta-value">${result.exif.Make}</div></div>` : ''}
+          ${result.exif.Model ? `<div class="meta-item"><div class="meta-key">Model</div><div class="meta-value">${result.exif.Model}</div></div>` : ''}
+          ${result.exif.Software ? `<div class="meta-item"><div class="meta-key">Software</div><div class="meta-value">${result.exif.Software}</div></div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // DateTime Section
+  if (result.hasDateTime) {
+    html += `
+      <div class="meta-section">
+        <div class="meta-section-title">🕐 Date & Time</div>
+        <div class="meta-grid">
+          ${result.exif.DateTime ? `<div class="meta-item"><div class="meta-key">Date Time</div><div class="meta-value">${result.exif.DateTime}</div></div>` : ''}
+          ${result.exif.DateTimeOriginal ? `<div class="meta-item"><div class="meta-key">Original</div><div class="meta-value">${result.exif.DateTimeOriginal}</div></div>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  // Camera Section
+  const cameraFields = ['ExposureTime', 'FNumber', 'ISOSpeedRatings', 'FocalLength'];
+  const cameraData = cameraFields.filter(f => result.exif[f]);
+  if (cameraData.length > 0) {
+    html += `
+      <div class="meta-section">
+        <div class="meta-section-title">📷 Camera Settings</div>
+        <div class="meta-grid">
+          ${cameraData.map(f => `<div class="meta-item"><div class="meta-key">${f}</div><div class="meta-value">${result.exif[f]}</div></div>`).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Strip Section
+  html += `
+    <div class="strip-section">
+      <button class="strip-btn strip-btn-primary" onclick="stripAndDownload(${cardIndex})">
+        🧹 Strip Metadata & Download
+      </button>
+      <button class="strip-btn strip-btn-secondary" id="stripped-status-${cardIndex}">
+        Download Original
+      </button>
+    </div>
+  `;
+
+  return html;
+}
+
+// ============================================
+// STRIP & DOWNLOAD
+// ============================================
+
+async function stripAndDownload(cardIndex) {
+  const result = scanResults[cardIndex];
+  const btn = document.querySelector(`#body-${cardIndex} .strip-btn-primary`);
+  btn.textContent = '⏳ Processing...';
+  btn.disabled = true;
+
+  try {
+    const strippedBlob = await stripMetadata(result.file);
+    strippedFiles[cardIndex] = { blob: strippedBlob, name: result.name };
+
+    const url = URL.createObjectURL(strippedBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'clean_' + result.name.replace(/\.[^.]+$/, '.jpg');
+    a.click();
+    URL.revokeObjectURL(url);
+
+    btn.textContent = '✅ Stripped & Downloaded';
+    btn.style.background = 'rgba(16,185,129,0.2)';
+    btn.style.color = '#10b981';
+
+    showToast('✅ Clean photo downloaded!');
+  } catch(e) {
+    btn.textContent = '❌ Error — Try Again';
+    btn.disabled = false;
   }
 }
 
-function formatValue(key, val) {
-  if (val === null || val === undefined) return '—';
-  if (key === 'ExposureTime') {
-    if (val < 1) return `1/${Math.round(1/val)}s`;
-    return `${val}s`;
+async function downloadAllClean() {
+  const btn = document.querySelector('.download-all-btn');
+  btn.textContent = '⏳ Preparing clean photos...';
+  btn.disabled = true;
+
+  try {
+    // Strip all files
+    for (let i = 0; i < scanResults.length; i++) {
+      if (!strippedFiles[i]) {
+        btn.textContent = `⏳ Stripping photo ${i + 1} of ${scanResults.length}...`;
+        const blob = await stripMetadata(scanResults[i].file);
+        strippedFiles[i] = { blob, name: scanResults[i].name };
+      }
+    }
+
+    // Try JSZip if available, otherwise download individually
+    if (typeof JSZip !== 'undefined') {
+      const zip = new JSZip();
+      Object.values(strippedFiles).forEach(({ blob, name }) => {
+        zip.file('clean_' + name.replace(/\.[^.]+$/, '.jpg'), blob);
+      });
+
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'privacylab_clean_photos.zip';
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      // Download individually
+      for (let i = 0; i < scanResults.length; i++) {
+        const { blob, name } = strippedFiles[i];
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'clean_' + name.replace(/\.[^.]+$/, '.jpg');
+        a.click();
+        URL.revokeObjectURL(url);
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
+
+    btn.textContent = '✅ All Clean Photos Downloaded!';
+    btn.style.background = 'rgba(16,185,129,0.2)';
+    btn.style.color = '#10b981';
+    showToast('✅ All clean photos downloaded!');
+
+  } catch(e) {
+    btn.textContent = '📦 Download All Clean Photos (ZIP)';
+    btn.disabled = false;
+    showToast('⚠️ Try downloading individually');
   }
-  if (key === 'FNumber') return `f/${val}`;
-  if (key === 'FocalLength' || key === 'FocalLengthIn35mmFilm') return `${val} mm`;
-  if (key === 'ISOSpeedRatings') return `ISO ${val}`;
-  if (key === 'Flash') {
-    const flashMap = {0:'No flash',1:'Flash fired',5:'Strobe flash',7:'Flash with red-eye',9:'Flash fired (compulsory)',16:'Flash off',24:'Flash auto',25:'Flash fired (auto)',29:'Flash fired + red-eye'};
-    return flashMap[val] || `Value: ${val}`;
-  }
-  if (key === 'Orientation') {
-    const oMap = {1:'Normal',2:'Flipped H',3:'Rotated 180°',4:'Flipped V',5:'Rotated 90° CW + Flip',6:'Rotated 90° CW',7:'Rotated 90° CCW + Flip',8:'Rotated 90° CCW'};
-    return oMap[val] || `Value: ${val}`;
-  }
-  if (key === 'ColorSpace') return val === 1 ? 'sRGB' : val === 65535 ? 'Uncalibrated' : `Value: ${val}`;
-  if (key === 'WhiteBalance') return val === 0 ? 'Auto' : 'Manual';
-  if (key === 'GPSLatitude' || key === 'GPSLongitude') {
-    if (Array.isArray(val)) return `${val[0]}° ${val[1]}' ${parseFloat(val[2]).toFixed(2)}"`;
-  }
-  if (key === 'GPSAltitude') return `${parseFloat(val).toFixed(1)} m`;
-  if (Array.isArray(val)) return val.join(', ');
-  return String(val).substring(0, 200);
 }
 
-function formatBytes(bytes) {
-  if(bytes < 1024) return bytes + ' B';
-  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
-  return (bytes/1048576).toFixed(2) + ' MB';
+// ============================================
+// SHARE CARD
+// ============================================
+
+function copyShareCard() {
+  const text = document.getElementById('shareCardText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 Copied! Share it to spread privacy awareness');
+  }).catch(() => {
+    showToast('⚠️ Please copy manually');
+  });
+}
+
+function downloadShareCard() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 600;
+  canvas.height = 400;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, 600, 400);
+
+  // Border
+  ctx.strokeStyle = '#06b6d4';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(10, 10, 580, 380);
+
+  // Title
+  ctx.fillStyle = '#06b6d4';
+  ctx.font = 'bold 22px Arial';
+  ctx.fillText('🔐 Privacy Lab — Scan Results', 30, 55);
+
+  // Stats
+  const gpsCount = scanResults.filter(r => r.hasGPS).length;
+  const deviceCount = scanResults.filter(r => r.hasDevice).length;
+
+  ctx.fillStyle = '#e2e8f0';
+  ctx.font = '16px Arial';
+  ctx.fillText(`📸 Photos scanned: ${scanResults.length}`, 30, 110);
+  ctx.fillText(`📍 GPS locations found: ${gpsCount}`, 30, 145);
+  ctx.fillText(`📱 Device info exposed: ${deviceCount}`, 30, 180);
+
+  // Risk
+  const risk = document.getElementById('riskBadge').textContent;
+  ctx.fillStyle = '#ef4444';
+  ctx.font = 'bold 18px Arial';
+  ctx.fillText(risk, 30, 225);
+
+  // Tagline
+  ctx.fillStyle = '#475569';
+  ctx.font = '13px Arial';
+  ctx.fillText('"Privacy is not just a feature — it\'s the foundation."', 30, 290);
+
+  ctx.fillStyle = '#06b6d4';
+  ctx.font = 'bold 14px Arial';
+  ctx.fillText('privacylab.tools', 30, 340);
+
+  canvas.toBlob((blob) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'privacylab_scan_results.png';
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('💾 Results card saved!');
+  });
+}
+
+// ============================================
+// UTILITIES
+// ============================================
+
+function resetScanner() {
+  selectedFiles = [];
+  scanResults = [];
+  strippedFiles = {};
+
+  document.getElementById('photoQueue').style.display = 'none';
+  document.getElementById('progressContainer').style.display = 'none';
+  document.getElementById('scanBtn').style.display = 'none';
+  document.getElementById('resultsSummary').style.display = 'none';
+  document.getElementById('resultsList').style.display = 'none';
+  document.getElementById('resultsList').innerHTML = '';
+  document.getElementById('downloadAllSection').style.display = 'none';
+  document.getElementById('scanAgainBtn').style.display = 'none';
+  document.getElementById('photoGrid').innerHTML = '';
+  document.getElementById('fileInput').value = '';
+
+  showToast('🔄 Ready to scan more photos');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }
 </script>
 </body>
