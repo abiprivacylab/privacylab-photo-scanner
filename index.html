@@ -682,6 +682,53 @@
 
   .scan-again-btn:hover { background: rgba(6,182,212,0.08); }
 
+/* Global Counter */
+.global-counter {
+  background: rgba(6,182,212,0.05);
+  border: 1px solid rgba(6,182,212,0.15);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.counter-title {
+  font-size: 13px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.counter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.counter-item {
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.counter-number {
+  font-size: 28px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #06b6d4, #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 4px;
+}
+
+.counter-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+
   /* Footer */
   .footer {
     text-align: center;
@@ -737,6 +784,25 @@
       <div class="trust-badge"><span>✓</span> Up to 10 photos</div>
     </div>
   </div>
+
+<!-- Global Counter -->
+<div class="global-counter" id="globalCounter">
+  <div class="counter-title">🌍 Global Privacy Stats</div>
+  <div class="counter-grid">
+    <div class="counter-item">
+      <div class="counter-number" id="cntScans">...</div>
+      <div class="counter-label">📸 Photos Scanned</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-number" id="cntGPS">...</div>
+      <div class="counter-label">📍 GPS Locations Found</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-number" id="cntCleaned">...</div>
+      <div class="counter-label">🧹 Photos Cleaned</div>
+    </div>
+  </div>
+</div>
 
   <!-- Upload Zone -->
   <div class="upload-zone" id="uploadZone">
@@ -841,6 +907,40 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  
+// ============================================
+// GLOBAL COUNTER
+// ============================================
+
+const WORKER_URL = 'https://privacylab-counter.abi-privacylab-tools.workers.dev';
+
+async function fetchCounters() {
+  try {
+    const res = await fetch(`${WORKER_URL}/?action=get`);
+    const data = await res.json();
+    document.getElementById('cntScans').textContent = data.total_scans.toLocaleString();
+    document.getElementById('cntGPS').textContent = data.gps_found.toLocaleString();
+    document.getElementById('cntCleaned').textContent = data.photos_cleaned.toLocaleString();
+  } catch(e) {
+    document.getElementById('cntScans').textContent = '0';
+    document.getElementById('cntGPS').textContent = '0';
+    document.getElementById('cntCleaned').textContent = '0';
+  }
+}
+
+async function updateCounters(scans, gps, cleaned) {
+  try {
+    await fetch(`${WORKER_URL}/?action=update`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scans, gps, cleaned })
+    });
+    fetchCounters();
+  } catch(e) {}
+}
+
+// Fetch counters on page load
+fetchCounters();
 // ============================================
 // PRIVACY LAB V2.0 — Photo Privacy Scanner
 // Built by Abhishek Anand — privacylab.tools
@@ -1147,6 +1247,10 @@ async function startScan() {
   setTimeout(() => {
     document.getElementById('progressContainer').style.display = 'none';
     showResults();
+    
+    // Update global counter
+    const gpsCount = scanResults.filter(r => r.hasGPS).length;
+    updateCounters(scanResults.length, gpsCount, 0);
   }, 500);
 }
 
@@ -1383,6 +1487,7 @@ async function stripAndDownload(cardIndex) {
     btn.style.color = '#10b981';
 
     showToast('✅ Clean photo downloaded!');
+    updateCounters(0, 0, 1);
   } catch(e) {
     btn.textContent = '❌ Error — Try Again';
     btn.disabled = false;
